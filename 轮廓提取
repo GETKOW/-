@@ -19,7 +19,7 @@ void Find_Draw_COntours(int, void*);
 
 int main()
 {
-	srcImage = imread("C:\\Users\\王元均\\Desktop\\picture\\bb.jpg");
+        srcImage = imread("图片路径");
 	namedWindow(WINDOWN_1, 1);
 	imshow(WINDOWN_1, srcImage);
 

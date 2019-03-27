@@ -1,0 +1,48 @@
+#include <opencv2/opencv.hpp>  
+#include<iostream>  
+using namespace std;
+using namespace cv;
+
+#define WINDOWN_1 "原图"  
+#define WINDOWN_2 "CANNY图"  
+#define WINDOWN_3 "效果图"  
+
+Mat srcImage, grayImage, out_Canny;
+int min_Thresh = 50;
+int max_Thresh = 250;
+
+vector<vector<Point>> g_vContours;
+vector<Vec4i> g_vHierarchy;
+
+RNG G_RNG(1234);
+void Find_Draw_COntours(int, void*);
+
+int main()
+{
+	srcImage = imread("C:\\Users\\王元均\\Desktop\\picture\\bb.jpg");
+	namedWindow(WINDOWN_1, 1);
+	imshow(WINDOWN_1, srcImage);
+
+	cvtColor(srcImage, grayImage, COLOR_BGR2GRAY);
+	blur(grayImage, grayImage, Size(3, 3));
+
+	createTrackbar("CANNY 值：", WINDOWN_1, &min_Thresh, max_Thresh, Find_Draw_COntours);
+	Find_Draw_COntours(0, 0);
+	waitKey(0);
+	return 0;
+}
+void Find_Draw_COntours(int, void*)
+{
+	Canny(grayImage, out_Canny, min_Thresh, max_Thresh * 2, 3);
+	imshow(WINDOWN_2, out_Canny);
+
+	findContours(out_Canny, g_vContours, g_vHierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0));
+	Mat Drawing = Mat::zeros(out_Canny.size(), CV_8UC3);
+
+	for (int i = 0; i < g_vContours.size(); i++)
+	{
+		Scalar color = Scalar(G_RNG.uniform(0, 255), G_RNG.uniform(0, 255), G_RNG.uniform(0, 255));
+		drawContours(Drawing, g_vContours, i, color, 2, 8, g_vHierarchy, 0, Point());
+	}
+	imshow(WINDOWN_3, Drawing);
+}

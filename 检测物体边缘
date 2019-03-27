@@ -1,0 +1,62 @@
+这些代码于CSDN一个博主的博客
+这是原链接https://blog.csdn.net/qq_17278169/article/details/54286469
+我这里只是尝试一下github的使用方法
+如果博主介意的话会立刻删除
+
+#include <opencv2/opencv.hpp>  
+#include<iostream>  
+
+using namespace std;
+using namespace cv;
+
+Vec3b target = Vec3b(0, 0, 0);//目标颜色RGB值
+
+bool getDistance(const Vec3b& color)
+{
+	return abs(color[2] - target[2]) < 255 &&
+		abs(color[1] - target[1]) < 80 &&
+		abs(color[0] - target[0]) < 255;
+}
+
+int main(int argc, char *argv[])
+{
+	//Mat src = imread("C:\\Users\\lcg\\Desktop\\000001_20151209_00097067.BMP");
+	Mat src = imread("图片路径");
+	Mat resized;
+	Mat result;
+	int ratio;
+	if (src.size().width < 200)
+		ratio = 1;
+	else
+		ratio = src.size().width / 200;
+	if (!src.data)
+	{
+		fprintf(stderr, "error load pic\n");
+		return -1;
+	}
+	resize(src, resized, Size(src.cols, src.rows));
+	resize(src, resized, Size(src.cols / ratio, src.rows / ratio));
+	resized = src.clone();
+	result = resized.clone();
+	Mat_ <cv::Vec3b>::const_iterator it = resized.begin<Vec3b>();
+	Mat_ <cv::Vec3b>::const_iterator itend = resized.end<Vec3b>();
+	Mat_ <cv::Vec3b>::iterator itout = result.begin<Vec3b>();
+	for (; it != itend; ++it, ++itout)
+	{
+		if (getDistance(*it))
+		{
+		}
+		else
+		{
+			(*itout)[0] = 255;
+			(*itout)[1] = 255;
+			(*itout)[2] = 255;
+		}
+	}
+	namedWindow("src");
+	imshow("src", resized);
+	namedWindow("resized");
+	imshow("resized", result);
+	waitKey(0);
+	return 0;
+}
